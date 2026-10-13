@@ -32,6 +32,9 @@ DATASETS = {
              "donor": "donor", "batch_keys": []},
     "neurips": {"path": PROJ / "data/neurips_mm_sub30k.h5ad", "labels": ["cell_type"],
                 "donor": "DonorNumber", "batch_keys": ["batch"]},
+    # 2,000-cell PBMC subset shipped with the code (scripts/make_toy_data.py), for quick runs without downloads
+    "toy": {"path": PROJ / "toy_data/toy_pbmc_cite.h5ad", "labels": ["celltype.l1", "celltype.l2"],
+            "donor": "donor", "batch_keys": []},
 }
 
 

@@ -61,13 +61,37 @@ tests/                       unit tests for scene_mm (pytest)
 results_tables/              collected metrics (CSV) behind every number above
 results_protein/             protein-prediction results per donor and method
 figures_en/                  figures used in the slides
+toy_data/                    2,000-cell CITE-seq subset for quick runs (toy_run.sh)
 reproduction/                scripts to rerun the authors' pipeline (Mac and SLURM)
   SCENE-reproducibility/     authors' code (git submodule, pinned commit)
   upstream_changes.patch     our small fixes to the authors' code
 docs/                        project plan, status, math derivations
 ```
 
-## How to reproduce
+## Quick start (toy data, ~1 minute on a laptop CPU)
+
+```bash
+git clone --recursive https://github.com/Polinakleidman/scene_model && cd scene_model
+pip install -r requirements.txt
+pip install -e reproduction/SCENE-reproducibility/scene   # the authors' SCENE package
+./toy_run.sh                       # multimodal SCENE on the shipped 2,000-cell CITE-seq subset (toy_data/)
+./reproduction/toy_run.sh          # the authors' SCENE vs PCA on their bundled cortex data (3,005 cells)
+```
+
+Expected output: proteins raise cell-type NMI (0.63 → 0.72), fold-in transfers labels to a new donor far better than
+aggregation (0.85 vs 0.28), and SCENE beats PCA on cortex (NMI 0.84 vs 0.69). Details: [toy_data/README.md](toy_data/README.md).
+
+## Data
+
+Toy data are in the repository. Full raw data:
+
+| Dataset | Source |
+|---|---|
+| PBMC CITE-seq (Hao et al. 2021) | [GEO GSE164378](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE164378); file used: [figshare 27458840](https://ndownloader.figshare.com/files/27458840) |
+| NeurIPS 2021 BMMC CITE-seq | [GEO GSE194122](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE194122) |
+| Datasets of the original paper (cortex, HCA, Kang IFN-β, GR, TCR, SIM1, SIM2) | links in the authors' [docs/DATA.md](https://github.com/oscarmoeberg/SCENE-reproducibility/blob/main/docs/DATA.md); downloaded by `reproduction/prepare_all.sh` |
+
+## How to reproduce everything
 
 ```bash
 git clone --recursive https://github.com/Polinakleidman/scene_model
@@ -90,7 +114,7 @@ python scripts/build_trackA_report.py          # -> trackA_report.html
 pytest tests/
 ```
 
-A single run: `python scripts/run_experiment.py --help`.
+A single run: `python scripts/run_experiment.py --help` (`--dataset toy|pbmc|neurips`).
 Every trained run writes `results/<run>/embedding.h5ad` with cell positions in `obsm["X_scene"]`,
 gene positions in `varm["W_rna"]` and protein positions in `uns["protein_positions"]`.
 

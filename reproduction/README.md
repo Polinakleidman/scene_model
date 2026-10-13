@@ -17,6 +17,11 @@ using the authors' own scripts from
 | `logs/commands.log` | Full stdout/stderr of every command |
 | `logs/done.txt`, `logs/failed.txt` | Finished commands (skipped on re-run) and failed ones |
 
+## Toy run (~1 minute, no downloads)
+
+`./toy_run.sh` trains SCENE (16D, ZIP, 200 epochs) and the PCA baseline with the authors' scripts on their bundled
+cortex data (3,005 cells × 19,972 genes) and prints KMeans NMI/ARI. Expected: SCENE NMI 0.84, PCA 0.69.
+
 ## How to run
 
 ```bash

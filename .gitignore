@@ -23,3 +23,6 @@ scene_reproduction_patch.tar.gz
 # macOS
 .DS_Store
 ._*
+
+# toy run outputs
+results_toy/

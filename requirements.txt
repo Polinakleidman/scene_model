@@ -8,6 +8,7 @@ scanpy>=1.10
 scikit-learn>=1.5
 scvi-tools>=1.2      # scVI / totalVI baselines
 umap-learn>=0.5
+harmonypy>=0.0.10   # PCA + Harmony baseline in the reproduction
 matplotlib>=3.9
 nbformat>=5.10       # report builder
 nbclient>=0.10
