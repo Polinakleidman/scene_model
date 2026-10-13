@@ -1,0 +1,9 @@
+{
+  "method": "knn",
+  "donor": "P7",
+  "n_proteins": 213,
+  "time_s": 5.4,
+  "pearson_mean": 0.4821530878543854,
+  "pearson_median": 0.4851435720920563,
+  "spearman_mean": 0.43646651943581277
+}

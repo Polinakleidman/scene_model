@@ -1,0 +1,9 @@
+{
+  "method": "totalvi",
+  "donor": "P4",
+  "n_proteins": 213,
+  "time_s": 3767.7,
+  "pearson_mean": 0.5288547277450562,
+  "pearson_median": 0.5024269819259644,
+  "spearman_mean": 0.4788192471294125
+}

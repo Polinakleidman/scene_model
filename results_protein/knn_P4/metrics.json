@@ -1,0 +1,9 @@
+{
+  "method": "knn",
+  "donor": "P4",
+  "n_proteins": 213,
+  "time_s": 5.2,
+  "pearson_mean": 0.48577049374580383,
+  "pearson_median": 0.4349178373813629,
+  "spearman_mean": 0.4391036988385551
+}

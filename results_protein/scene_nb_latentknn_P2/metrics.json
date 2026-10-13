@@ -1,0 +1,9 @@
+{
+  "method": "scene_nb_latentknn",
+  "donor": "P2",
+  "n_proteins": 213,
+  "time_s": 29.5,
+  "pearson_mean": 0.4602542221546173,
+  "pearson_median": 0.4418051838874817,
+  "spearman_mean": 0.37120054503896116
+}

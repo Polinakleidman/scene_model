@@ -1,0 +1,9 @@
+{
+  "method": "scene_zip",
+  "donor": "P5",
+  "n_proteins": 213,
+  "time_s": 41.7,
+  "pearson_mean": 0.4025190472602844,
+  "pearson_median": 0.3865072429180145,
+  "spearman_mean": 0.3405295352959215
+}

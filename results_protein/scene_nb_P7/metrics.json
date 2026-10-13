@@ -1,0 +1,9 @@
+{
+  "method": "scene_nb",
+  "donor": "P7",
+  "n_proteins": 213,
+  "time_s": 49.0,
+  "pearson_mean": 0.43230900168418884,
+  "pearson_median": 0.3933272659778595,
+  "spearman_mean": 0.3788616574192072
+}

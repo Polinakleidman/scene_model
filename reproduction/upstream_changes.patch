@@ -1,0 +1,57 @@
+diff --git a/notebooks/figures/fig_5_ultra_low_dim.ipynb b/notebooks/figures/fig_5_ultra_low_dim.ipynb
+index 841e34c..e285516 100644
+--- a/notebooks/figures/fig_5_ultra_low_dim.ipynb
++++ b/notebooks/figures/fig_5_ultra_low_dim.ipynb
+@@ -946,7 +946,7 @@
+     "results_root = (PROJECT_ROOT / \"results\")\n",
+     "\n",
+     "dims = [2, 3, 8, 16, 32, 64]\n",
+-    "seeds = [0, 1, 2, 3, 4]\n",
++    "seeds = [0, 1]  # reproduction: dimension sweep run with 2 seeds\n",
+     "x = list(range(len(dims)))  # categorical spacing\n",
+     "\n",
+     "dataset_dirs = {\n",
+diff --git a/scripts/imputation.py b/scripts/imputation.py
+index b482296..1ef962c 100644
+--- a/scripts/imputation.py
++++ b/scripts/imputation.py
+@@ -3,7 +3,7 @@
+ Impute masked counts with SCENE or scVI and evaluate prediction accuracy.
+ """
+ from __future__ import annotations
+-import argparse, json, logging, sys
++import argparse, json, logging, os, sys
+ from pathlib import Path
+ from typing import Any, Dict, List, Tuple
+ 
+@@ -243,6 +243,8 @@ def run_scene(
+         loss_type=loss_type,
+         seed=seed,
+         split_seed=split_seed,
++        # Mac/cluster reproduction patch: optional cell mini-batches (unset = authors' full-matrix training).
++        cell_batch_size=int(os.environ["SCENE_CELL_BATCH_SIZE"]) if os.environ.get("SCENE_CELL_BATCH_SIZE") else None,
+     )
+     return model, adata_out
+ 
+@@ -316,6 +318,7 @@ def scene_impute(
+         out_emb=out_key,
+         batch_keys=batch_keys,
+         device=device or "cpu",
++        chunk_size=int(os.environ["SCENE_RECON_CHUNK"]) if os.environ.get("SCENE_RECON_CHUNK") else None,
+     )
+ 
+     if loss_type.lower() == "zip":
+diff --git a/scripts/write_paper_tables.py b/scripts/write_paper_tables.py
+index cd2eb7f..4f5dc17 100644
+--- a/scripts/write_paper_tables.py
++++ b/scripts/write_paper_tables.py
+@@ -18,6 +18,9 @@ def main():
+                   for name, genes in modules.items()]).to_csv(output / "gr_modules.csv", index=False)
+     for model in ["scLDM", "SIMBA"]:
+         path = root / f"results/geometric_biology/{model}_TCR/gene_module_eval.csv"
++        if not path.exists():  # reproduction: TCR/SIMBA not run
++            print(f"Skipping missing {path.relative_to(root)}")
++            continue
+         pd.read_csv(path).to_csv(output / f"{'SCENE' if model == 'scLDM' else model}_TCR.csv", index=False)
+     print(f"Saved tables to {output}")
+ 

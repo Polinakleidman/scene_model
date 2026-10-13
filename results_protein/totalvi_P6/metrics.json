@@ -1,0 +1,9 @@
+{
+  "method": "totalvi",
+  "donor": "P6",
+  "n_proteins": 213,
+  "time_s": 715.8,
+  "pearson_mean": 0.551498293876648,
+  "pearson_median": 0.5920712947845459,
+  "spearman_mean": 0.49076538246437457
+}

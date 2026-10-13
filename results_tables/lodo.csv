@@ -1,0 +1,161 @@
+dataset,model,mode,donor,label,embedding,accuracy,macro_f1,foldin_time_s
+pbmc,SCENE rna+prot nb,lodo,P1,celltype.l1,aggregate,0.5612446958981613,0.4837887252444219,10.9
+pbmc,SCENE rna+prot nb,lodo,P1,celltype.l1,foldin,0.9756718528995757,0.9039820930788223,10.9
+pbmc,SCENE rna+prot nb,lodo,P1,celltype.l2,aggregate,0.4362093352192362,0.23421051090974815,10.9
+pbmc,SCENE rna+prot nb,lodo,P1,celltype.l2,foldin,0.8868458274398868,0.7409595265462816,10.9
+pbmc,SCENE rna+prot nb,lodo,P2,celltype.l1,aggregate,0.48606431852986215,0.40366679402582545,9.9
+pbmc,SCENE rna+prot nb,lodo,P2,celltype.l1,foldin,0.9470137825421133,0.8765775993978707,9.9
+pbmc,SCENE rna+prot nb,lodo,P2,celltype.l2,aggregate,0.3418070444104135,0.16818201662601667,9.9
+pbmc,SCENE rna+prot nb,lodo,P2,celltype.l2,foldin,0.8551301684532925,0.6532089921055833,9.9
+pbmc,SCENE rna+prot nb,lodo,P3,celltype.l1,aggregate,0.7245444801714899,0.6025903947045863,8.6
+pbmc,SCENE rna+prot nb,lodo,P3,celltype.l1,foldin,0.9871382636655949,0.974955676439026,8.6
+pbmc,SCENE rna+prot nb,lodo,P3,celltype.l2,aggregate,0.4769560557341908,0.22409833123418804,8.6
+pbmc,SCENE rna+prot nb,lodo,P3,celltype.l2,foldin,0.8888888888888888,0.7697922468169146,8.6
+pbmc,SCENE rna+prot nb,lodo,P4,celltype.l1,aggregate,0.7302243211334121,0.605780716823711,10.4
+pbmc,SCENE rna+prot nb,lodo,P4,celltype.l1,foldin,0.9760920897284534,0.9520027426643733,10.4
+pbmc,SCENE rna+prot nb,lodo,P4,celltype.l2,aggregate,0.5280401416765053,0.2268516671218397,10.4
+pbmc,SCENE rna+prot nb,lodo,P4,celltype.l2,foldin,0.8996458087367178,0.7301035137458866,10.4
+pbmc,SCENE rna+prot nb,lodo,P5,celltype.l1,aggregate,0.8109693877551021,0.6852830398810918,13.9
+pbmc,SCENE rna+prot nb,lodo,P5,celltype.l1,foldin,0.9701530612244897,0.9379897313747032,13.9
+pbmc,SCENE rna+prot nb,lodo,P5,celltype.l2,aggregate,0.627295918367347,0.28546763873631026,13.9
+pbmc,SCENE rna+prot nb,lodo,P5,celltype.l2,foldin,0.9252551020408163,0.7117750761512249,13.9
+pbmc,SCENE rna+prot nb,lodo,P6,celltype.l1,aggregate,0.7783058428850993,0.6629854929916492,12.5
+pbmc,SCENE rna+prot nb,lodo,P6,celltype.l1,foldin,0.9860218059826671,0.971225753169495,12.5
+pbmc,SCENE rna+prot nb,lodo,P6,celltype.l2,aggregate,0.5409561084707856,0.2908912958069644,12.5
+pbmc,SCENE rna+prot nb,lodo,P6,celltype.l2,foldin,0.9158512720156555,0.7189273672462314,12.5
+pbmc,SCENE rna+prot nb,lodo,P7,celltype.l1,aggregate,0.6577649958915366,0.5595552108964956,16.9
+pbmc,SCENE rna+prot nb,lodo,P7,celltype.l1,foldin,0.9492604765817584,0.9038440470237921,16.9
+pbmc,SCENE rna+prot nb,lodo,P7,celltype.l2,aggregate,0.509860312243221,0.2010737158784363,16.9
+pbmc,SCENE rna+prot nb,lodo,P7,celltype.l2,foldin,0.8923582580115037,0.6946019007023314,16.9
+pbmc,SCENE rna+prot nb,lodo,P8,celltype.l1,aggregate,0.5496987951807228,0.4628695509204205,16.1
+pbmc,SCENE rna+prot nb,lodo,P8,celltype.l1,foldin,0.9556798623063684,0.8775918473646662,16.1
+pbmc,SCENE rna+prot nb,lodo,P8,celltype.l2,aggregate,0.37672117039586916,0.19553419551973997,16.1
+pbmc,SCENE rna+prot nb,lodo,P8,celltype.l2,foldin,0.9010327022375215,0.786587709922778,16.1
+pbmc,SCENE rna+prot zip,lodo,P1,celltype.l1,aggregate,0.742008486562942,0.5304895914493544,12.9
+pbmc,SCENE rna+prot zip,lodo,P1,celltype.l1,foldin,0.960961810466761,0.8801914492449916,12.9
+pbmc,SCENE rna+prot zip,lodo,P1,celltype.l2,aggregate,0.44526166902404524,0.16874293621256495,12.9
+pbmc,SCENE rna+prot zip,lodo,P1,celltype.l2,foldin,0.869024045261669,0.6736993449664656,12.9
+pbmc,SCENE rna+prot zip,lodo,P2,celltype.l1,aggregate,0.5617151607963247,0.38082477109896207,11.7
+pbmc,SCENE rna+prot zip,lodo,P2,celltype.l1,foldin,0.9454823889739663,0.8932052768775565,11.7
+pbmc,SCENE rna+prot zip,lodo,P2,celltype.l2,aggregate,0.3626339969372129,0.11446494805644701,11.7
+pbmc,SCENE rna+prot zip,lodo,P2,celltype.l2,foldin,0.8548238897396631,0.6638832094379621,11.7
+pbmc,SCENE rna+prot zip,lodo,P3,celltype.l1,aggregate,0.6966773847802786,0.549342251549702,10.0
+pbmc,SCENE rna+prot zip,lodo,P3,celltype.l1,foldin,0.986423722758128,0.9707282128395451,10.0
+pbmc,SCENE rna+prot zip,lodo,P3,celltype.l2,aggregate,0.41586280814576637,0.1905246586429913,10.0
+pbmc,SCENE rna+prot zip,lodo,P3,celltype.l2,foldin,0.8985351911396927,0.7140307651873374,10.0
+pbmc,SCENE rna+prot zip,lodo,P4,celltype.l1,aggregate,0.685064935064935,0.5222917266011372,12.2
+pbmc,SCENE rna+prot zip,lodo,P4,celltype.l1,foldin,0.9642857142857143,0.9490872766012354,12.2
+pbmc,SCENE rna+prot zip,lodo,P4,celltype.l2,aggregate,0.4563164108618654,0.18012829230035168,12.2
+pbmc,SCENE rna+prot zip,lodo,P4,celltype.l2,foldin,0.8869539551357734,0.7146082703490088,12.2
+pbmc,SCENE rna+prot zip,lodo,P5,celltype.l1,aggregate,0.7691326530612245,0.6122110164828405,16.5
+pbmc,SCENE rna+prot zip,lodo,P5,celltype.l1,foldin,0.9727040816326531,0.9502990860307527,16.5
+pbmc,SCENE rna+prot zip,lodo,P5,celltype.l2,aggregate,0.6178571428571429,0.22499153035381145,16.5
+pbmc,SCENE rna+prot zip,lodo,P5,celltype.l2,foldin,0.9336734693877551,0.712838311221878,16.5
+pbmc,SCENE rna+prot zip,lodo,P6,celltype.l1,aggregate,0.8238747553816047,0.6773522766704189,14.5
+pbmc,SCENE rna+prot zip,lodo,P6,celltype.l1,foldin,0.9871400615040536,0.9713596004767262,14.5
+pbmc,SCENE rna+prot zip,lodo,P6,celltype.l2,aggregate,0.5647190383002516,0.24316353124405865,14.5
+pbmc,SCENE rna+prot zip,lodo,P6,celltype.l2,foldin,0.9136147609728823,0.7426870499206495,14.5
+pbmc,SCENE rna+prot zip,lodo,P7,celltype.l1,aggregate,0.75,0.6163020957901043,19.8
+pbmc,SCENE rna+prot zip,lodo,P7,celltype.l1,foldin,0.947000821692687,0.8989385985160456,19.8
+pbmc,SCENE rna+prot zip,lodo,P7,celltype.l2,aggregate,0.5649137222678718,0.2222691674688614,19.8
+pbmc,SCENE rna+prot zip,lodo,P7,celltype.l2,foldin,0.8851684470008216,0.6330750341306063,19.8
+pbmc,SCENE rna+prot zip,lodo,P8,celltype.l1,aggregate,0.6006884681583476,0.4606975732797934,19.0
+pbmc,SCENE rna+prot zip,lodo,P8,celltype.l1,foldin,0.9401893287435457,0.8649685141012952,19.0
+pbmc,SCENE rna+prot zip,lodo,P8,celltype.l2,aggregate,0.46880378657487093,0.19082487696304276,19.0
+pbmc,SCENE rna+prot zip,lodo,P8,celltype.l2,foldin,0.8904905335628227,0.6881283756347718,19.0
+pbmc,SCENE rna nb,lodo,P1,celltype.l1,aggregate,0.693917963224894,0.6509018900390416,10.3
+pbmc,SCENE rna nb,lodo,P1,celltype.l1,foldin,0.8814710042432815,0.8327508198709737,10.3
+pbmc,SCENE rna nb,lodo,P1,celltype.l2,aggregate,0.5069306930693069,0.3143671522863498,10.3
+pbmc,SCENE rna nb,lodo,P1,celltype.l2,foldin,0.786987270155587,0.5981206264659807,10.3
+pbmc,SCENE rna nb,lodo,P2,celltype.l1,aggregate,0.6578866768759571,0.6281093692200791,9.4
+pbmc,SCENE rna nb,lodo,P2,celltype.l1,foldin,0.8756508422664625,0.8492843611801928,9.4
+pbmc,SCENE rna nb,lodo,P2,celltype.l2,aggregate,0.4508422664624809,0.3325127711784824,9.4
+pbmc,SCENE rna nb,lodo,P2,celltype.l2,foldin,0.7871362940275651,0.6341480541936582,9.4
+pbmc,SCENE rna nb,lodo,P3,celltype.l1,aggregate,0.7688460164344408,0.6851907366492536,8.0
+pbmc,SCENE rna nb,lodo,P3,celltype.l1,foldin,0.938549481957842,0.9163919676743719,8.0
+pbmc,SCENE rna nb,lodo,P3,celltype.l2,aggregate,0.5287602715255448,0.3195371258861287,8.0
+pbmc,SCENE rna nb,lodo,P3,celltype.l2,foldin,0.8474455162558057,0.6506227214352164,8.0
+pbmc,SCENE rna nb,lodo,P4,celltype.l1,aggregate,0.711629279811098,0.6159723473746911,9.8
+pbmc,SCENE rna nb,lodo,P4,celltype.l1,foldin,0.89728453364817,0.9005053368304621,9.8
+pbmc,SCENE rna nb,lodo,P4,celltype.l2,aggregate,0.538370720188902,0.2711266044897362,9.8
+pbmc,SCENE rna nb,lodo,P4,celltype.l2,foldin,0.8184769775678866,0.6330663745414639,9.8
+pbmc,SCENE rna nb,lodo,P5,celltype.l1,aggregate,0.7464285714285714,0.6434470768163458,13.4
+pbmc,SCENE rna nb,lodo,P5,celltype.l1,foldin,0.9122448979591836,0.8603091859803367,13.4
+pbmc,SCENE rna nb,lodo,P5,celltype.l2,aggregate,0.5890306122448979,0.23698288338985068,13.4
+pbmc,SCENE rna nb,lodo,P5,celltype.l2,foldin,0.8655612244897959,0.6162159354114656,13.4
+pbmc,SCENE rna nb,lodo,P6,celltype.l1,aggregate,0.7444786133631535,0.6454346581521948,12.3
+pbmc,SCENE rna nb,lodo,P6,celltype.l1,foldin,0.9457646072127481,0.9067961698596765,12.3
+pbmc,SCENE rna nb,lodo,P6,celltype.l2,aggregate,0.50125803746156,0.2772868577473376,12.3
+pbmc,SCENE rna nb,lodo,P6,celltype.l2,foldin,0.8674867207156836,0.649487791445762,12.3
+pbmc,SCENE rna nb,lodo,P7,celltype.l1,aggregate,0.7265817584223501,0.6041022070207989,16.1
+pbmc,SCENE rna nb,lodo,P7,celltype.l1,foldin,0.9069433032046015,0.8549784615034351,16.1
+pbmc,SCENE rna nb,lodo,P7,celltype.l2,aggregate,0.5497124075595727,0.2990887985087968,16.1
+pbmc,SCENE rna nb,lodo,P7,celltype.l2,foldin,0.8477814297452753,0.609186771645201,16.1
+pbmc,SCENE rna nb,lodo,P8,celltype.l1,aggregate,0.7151462994836488,0.696229981485617,15.2
+pbmc,SCENE rna nb,lodo,P8,celltype.l1,foldin,0.8943631669535284,0.8332508288439102,15.2
+pbmc,SCENE rna nb,lodo,P8,celltype.l2,aggregate,0.5718588640275387,0.3469915268501694,15.2
+pbmc,SCENE rna nb,lodo,P8,celltype.l2,foldin,0.8373493975903614,0.6709485452441294,15.2
+pbmc,SCENE rna zip,lodo,P1,celltype.l1,aggregate,0.6975954738330976,0.5032028350756048,12.3
+pbmc,SCENE rna zip,lodo,P1,celltype.l1,foldin,0.8939179632248939,0.8371359825719796,12.3
+pbmc,SCENE rna zip,lodo,P1,celltype.l2,aggregate,0.46364922206506365,0.256740726647218,12.3
+pbmc,SCENE rna zip,lodo,P1,celltype.l2,foldin,0.7991513437057991,0.6124289402139774,12.3
+pbmc,SCENE rna zip,lodo,P2,celltype.l1,aggregate,0.6180704441041348,0.48350296026279643,11.1
+pbmc,SCENE rna zip,lodo,P2,celltype.l1,foldin,0.8508422664624808,0.8366569797956431,11.1
+pbmc,SCENE rna zip,lodo,P2,celltype.l2,aggregate,0.41684532924961715,0.22561343449631627,11.1
+pbmc,SCENE rna zip,lodo,P2,celltype.l2,foldin,0.7730474732006125,0.6119222505032056,11.1
+pbmc,SCENE rna zip,lodo,P3,celltype.l1,aggregate,0.7123972847445517,0.5862044634613791,9.5
+pbmc,SCENE rna zip,lodo,P3,celltype.l1,foldin,0.9428367274026438,0.9243335537864539,9.5
+pbmc,SCENE rna zip,lodo,P3,celltype.l2,aggregate,0.5119685602000714,0.27025032027109713,9.5
+pbmc,SCENE rna zip,lodo,P3,celltype.l2,foldin,0.8531618435155413,0.6133957691187014,9.5
+pbmc,SCENE rna zip,lodo,P4,celltype.l1,aggregate,0.6939197166469894,0.5561282197476289,11.6
+pbmc,SCENE rna zip,lodo,P4,celltype.l1,foldin,0.8733766233766234,0.8821002807992893,11.6
+pbmc,SCENE rna zip,lodo,P4,celltype.l2,aggregate,0.4952774498229044,0.2627432960721498,11.6
+pbmc,SCENE rna zip,lodo,P4,celltype.l2,foldin,0.8031286894923259,0.6655000390979245,11.6
+pbmc,SCENE rna zip,lodo,P5,celltype.l1,aggregate,0.6795918367346939,0.5276511359297189,15.9
+pbmc,SCENE rna zip,lodo,P5,celltype.l1,foldin,0.9275510204081633,0.8788267760225482,15.9
+pbmc,SCENE rna zip,lodo,P5,celltype.l2,aggregate,0.5568877551020408,0.20933594518556342,15.9
+pbmc,SCENE rna zip,lodo,P5,celltype.l2,foldin,0.8836734693877552,0.6304332606281047,15.9
+pbmc,SCENE rna zip,lodo,P6,celltype.l1,aggregate,0.7263069611406207,0.5571806453479715,14.0
+pbmc,SCENE rna zip,lodo,P6,celltype.l1,foldin,0.9496785015376014,0.9234958733258734,14.0
+pbmc,SCENE rna zip,lodo,P6,celltype.l2,aggregate,0.5501817165222254,0.2628263819100599,14.0
+pbmc,SCENE rna zip,lodo,P6,celltype.l2,foldin,0.8565837293821639,0.6342043784521644,14.0
+pbmc,SCENE rna zip,lodo,P7,celltype.l1,aggregate,0.7302793755135579,0.5615799825802068,18.9
+pbmc,SCENE rna zip,lodo,P7,celltype.l1,foldin,0.8960558751027116,0.8474070555692941,18.9
+pbmc,SCENE rna zip,lodo,P7,celltype.l2,aggregate,0.562037797863599,0.2181468995463214,18.9
+pbmc,SCENE rna zip,lodo,P7,celltype.l2,foldin,0.8307313064913723,0.5391958145312132,18.9
+pbmc,SCENE rna zip,lodo,P8,celltype.l1,aggregate,0.6413511187607573,0.5337540675704526,18.1
+pbmc,SCENE rna zip,lodo,P8,celltype.l1,foldin,0.8659638554216867,0.8188677605431018,18.1
+pbmc,SCENE rna zip,lodo,P8,celltype.l2,aggregate,0.4705249569707401,0.23209002554296806,18.1
+pbmc,SCENE rna zip,lodo,P8,celltype.l2,foldin,0.8117469879518072,0.6263172385958466,18.1
+pbmc,scvi,lodo,P1,celltype.l1,scArches,0.925035360678925,0.8474839731411652,
+pbmc,scvi,lodo,P1,celltype.l2,scArches,0.8362093352192362,0.6862472719541041,
+pbmc,scvi,lodo,P2,celltype.l1,scArches,0.9454823889739663,0.9054906222528396,
+pbmc,scvi,lodo,P2,celltype.l2,scArches,0.8575803981623277,0.6632619342271712,
+pbmc,scvi,lodo,P3,celltype.l1,scArches,0.9696320114326545,0.9458911197411528,
+pbmc,scvi,lodo,P3,celltype.l2,scArches,0.8910325116112897,0.7602665763696033,
+pbmc,scvi,lodo,P4,celltype.l1,scArches,0.9315230224321134,0.9146459109929135,
+pbmc,scvi,lodo,P4,celltype.l2,scArches,0.8562573789846517,0.6904180685903186,
+pbmc,scvi,lodo,P5,celltype.l1,scArches,0.948469387755102,0.9149938960823834,
+pbmc,scvi,lodo,P5,celltype.l2,scArches,0.9,0.6800015367561684,
+pbmc,scvi,lodo,P6,celltype.l1,scArches,0.9787531450936539,0.9583788129331303,
+pbmc,scvi,lodo,P6,celltype.l2,scArches,0.9222812412636288,0.7915757487736709,
+pbmc,scvi,lodo,P7,celltype.l1,scArches,0.9391947411668036,0.8897391036954184,
+pbmc,scvi,lodo,P7,celltype.l2,scArches,0.8892769104354972,0.7089012785448513,
+pbmc,scvi,lodo,P8,celltype.l1,scArches,0.9294320137693631,0.853024310295833,
+pbmc,scvi,lodo,P8,celltype.l2,scArches,0.8808089500860585,0.7136975672855959,
+pbmc,totalvi,lodo,P1,celltype.l1,scArches,0.9697312588401698,0.9019061461223192,
+pbmc,totalvi,lodo,P1,celltype.l2,scArches,0.8777934936350777,0.757567161817152,
+pbmc,totalvi,lodo,P2,celltype.l1,scArches,0.9754977029096478,0.9349431261281589,
+pbmc,totalvi,lodo,P2,celltype.l2,scArches,0.9013782542113323,0.7771212221008481,
+pbmc,totalvi,lodo,P3,celltype.l1,scArches,0.9885673454805287,0.9713266131595701,
+pbmc,totalvi,lodo,P3,celltype.l2,scArches,0.9242586638085031,0.8455492511848375,
+pbmc,totalvi,lodo,P4,celltype.l1,scArches,0.9651711924439197,0.9446242216133378,
+pbmc,totalvi,lodo,P4,celltype.l2,scArches,0.9017119244391971,0.7754441467360851,
+pbmc,totalvi,lodo,P5,celltype.l1,scArches,0.9747448979591836,0.9491756140095391,
+pbmc,totalvi,lodo,P5,celltype.l2,scArches,0.9336734693877551,0.7495152587510642,
+pbmc,totalvi,lodo,P6,celltype.l1,scArches,0.9916130835896002,0.978899629489654,
+pbmc,totalvi,lodo,P6,celltype.l2,scArches,0.938495946323735,0.8293140457916857,
+pbmc,totalvi,lodo,P7,celltype.l1,scArches,0.9716516023007395,0.9265498312384783,
+pbmc,totalvi,lodo,P7,celltype.l2,scArches,0.9270747740345111,0.75708515405301,
+pbmc,totalvi,lodo,P8,celltype.l1,scArches,0.9617039586919105,0.88661551523858,
+pbmc,totalvi,lodo,P8,celltype.l2,scArches,0.9115748709122203,0.7923423362534799,

@@ -1,0 +1,4 @@
+python scripts/run_protein_prediction.py --donor P5 --method totalvi --accelerator gpu
+python scripts/run_protein_prediction.py --donor P6 --method totalvi --accelerator gpu
+python scripts/run_protein_prediction.py --donor P7 --method totalvi --accelerator gpu
+python scripts/run_protein_prediction.py --donor P8 --method totalvi --accelerator gpu

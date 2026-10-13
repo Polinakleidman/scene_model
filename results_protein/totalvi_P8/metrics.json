@@ -1,0 +1,9 @@
+{
+  "method": "totalvi",
+  "donor": "P8",
+  "n_proteins": 213,
+  "time_s": 694.1,
+  "pearson_mean": 0.4902544319629669,
+  "pearson_median": 0.5059098601341248,
+  "spearman_mean": 0.4201168906040813
+}

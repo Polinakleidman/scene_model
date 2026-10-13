@@ -1,0 +1,25 @@
+# data and trained models (regenerate with the scripts; see README)
+data/
+results/
+*.h5ad
+*.pt
+
+# logs and local environments
+logs_cluster/
+logs_protpred_local.txt
+reproduction/logs/
+reproduction/.venv/
+.venv/
+__pycache__/
+.pytest_cache/
+
+# large generated reports (the full reproduction report is attached to a GitHub release)
+SCENE_full_report.html
+reproduction/SCENE_full_report.ipynb
+reproduction/SCENE_reproduction_report.ipynb
+trackA_report.ipynb
+scene_reproduction_patch.tar.gz
+
+# macOS
+.DS_Store
+._*

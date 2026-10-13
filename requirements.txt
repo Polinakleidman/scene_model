@@ -1,0 +1,14 @@
+# Versions used for all Track A runs (Python 3.13). Install torch for your CUDA version first.
+torch>=2.4
+numpy>=2.0
+scipy>=1.13
+pandas>=2.2
+anndata>=0.10
+scanpy>=1.10
+scikit-learn>=1.5
+scvi-tools>=1.2      # scVI / totalVI baselines
+umap-learn>=0.5
+matplotlib>=3.9
+nbformat>=5.10       # report builder
+nbclient>=0.10
+pytest>=8

@@ -1,0 +1,66 @@
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik nb --dim 3 --seed 1 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik nb --dim 16 --seed 0 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik nb --dim 16 --seed 2 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik nb --dim 3 --seed 1 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik nb --dim 16 --seed 0 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik nb --dim 16 --seed 2 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik zip --dim 3 --seed 1 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik zip --dim 16 --seed 0 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik zip --dim 16 --seed 2 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik zip_decoupled --dim 3 --seed 1 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik zip_decoupled --dim 16 --seed 0 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik zip_decoupled --dim 16 --seed 2 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik zip --dim 3 --seed 1 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik zip --dim 16 --seed 0 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik zip --dim 16 --seed 2 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik zip_decoupled --dim 3 --seed 1 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik zip_decoupled --dim 16 --seed 0 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik zip_decoupled --dim 16 --seed 2 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P1 --rna-lik nb --dim 16 --seed 0 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P1 --rna-lik nb --dim 16 --seed 0 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P2 --rna-lik nb --dim 16 --seed 0 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P2 --rna-lik nb --dim 16 --seed 0 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P3 --rna-lik nb --dim 16 --seed 0 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P3 --rna-lik nb --dim 16 --seed 0 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P4 --rna-lik nb --dim 16 --seed 0 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P4 --rna-lik nb --dim 16 --seed 0 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P5 --rna-lik nb --dim 16 --seed 0 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P5 --rna-lik nb --dim 16 --seed 0 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P6 --rna-lik nb --dim 16 --seed 0 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P6 --rna-lik nb --dim 16 --seed 0 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P7 --rna-lik nb --dim 16 --seed 0 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P7 --rna-lik nb --dim 16 --seed 0 --device cuda --protein
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P8 --rna-lik nb --dim 16 --seed 0 --device cuda
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P8 --rna-lik nb --dim 16 --seed 0 --device cuda --protein
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik nb --dim 3 --seed 1 --device cuda
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik nb --dim 16 --seed 0 --device cuda
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik nb --dim 16 --seed 2 --device cuda
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik nb --dim 3 --seed 1 --device cuda --protein
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik nb --dim 16 --seed 0 --device cuda --protein
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik nb --dim 16 --seed 2 --device cuda --protein
+python scripts/run_baseline.py --dataset pbmc --method scvi --mode full --dim 16 --seed 1 --accelerator gpu
+python scripts/run_baseline.py --dataset neurips --method scvi --mode full --dim 16 --seed 0 --accelerator gpu
+python scripts/run_baseline.py --dataset neurips --method scvi --mode full --dim 16 --seed 2 --accelerator gpu
+python scripts/run_baseline.py --dataset pbmc --method scvi --mode lodo --lodo-donor P2 --dim 16 --seed 0 --accelerator gpu
+python scripts/run_baseline.py --dataset pbmc --method scvi --mode lodo --lodo-donor P4 --dim 16 --seed 0 --accelerator gpu
+python scripts/run_baseline.py --dataset pbmc --method scvi --mode lodo --lodo-donor P6 --dim 16 --seed 0 --accelerator gpu
+python scripts/run_baseline.py --dataset pbmc --method scvi --mode lodo --lodo-donor P8 --dim 16 --seed 0 --accelerator gpu
+python scripts/run_baseline.py --dataset pbmc --method totalvi --mode full --dim 16 --seed 1 --accelerator gpu
+python scripts/run_baseline.py --dataset neurips --method totalvi --mode full --dim 16 --seed 0 --accelerator gpu
+python scripts/run_baseline.py --dataset neurips --method totalvi --mode full --dim 16 --seed 2 --accelerator gpu
+python scripts/run_baseline.py --dataset pbmc --method totalvi --mode lodo --lodo-donor P2 --dim 16 --seed 0 --accelerator gpu
+python scripts/run_baseline.py --dataset pbmc --method totalvi --mode lodo --lodo-donor P4 --dim 16 --seed 0 --accelerator gpu
+python scripts/run_baseline.py --dataset pbmc --method totalvi --mode lodo --lodo-donor P6 --dim 16 --seed 0 --accelerator gpu
+python scripts/run_baseline.py --dataset pbmc --method totalvi --mode lodo --lodo-donor P8 --dim 16 --seed 0 --accelerator gpu
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik zip --dim 3 --seed 1 --device cuda
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik zip --dim 16 --seed 0 --device cuda
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik zip --dim 16 --seed 2 --device cuda
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik zip_decoupled --dim 3 --seed 1 --device cuda
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik zip_decoupled --dim 16 --seed 0 --device cuda
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik zip_decoupled --dim 16 --seed 2 --device cuda
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik zip --dim 3 --seed 1 --device cuda --protein
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik zip --dim 16 --seed 0 --device cuda --protein
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik zip --dim 16 --seed 2 --device cuda --protein
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik zip_decoupled --dim 3 --seed 1 --device cuda --protein
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik zip_decoupled --dim 16 --seed 0 --device cuda --protein
+python scripts/run_experiment.py --dataset neurips --mode full --rna-lik zip_decoupled --dim 16 --seed 2 --device cuda --protein

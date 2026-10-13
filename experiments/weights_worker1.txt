@@ -1,0 +1,14 @@
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik nb --protein --protein-weight 0.1 --dim 16 --seed 1 --device cuda --tag w0.1
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P1 --rna-lik nb --protein --protein-weight 0.1 --dim 16 --seed 0 --device cuda --tag w0.1
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P5 --rna-lik nb --protein --protein-weight 0.1 --dim 16 --seed 0 --device cuda --tag w0.1
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik nb --protein --protein-weight 0.3 --dim 16 --seed 0 --device cuda --tag w0.3
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik nb --protein --protein-weight 0.3 --dim 16 --seed 2 --device cuda --tag w0.3
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P3 --rna-lik nb --protein --protein-weight 0.3 --dim 16 --seed 0 --device cuda --tag w0.3
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P7 --rna-lik nb --protein --protein-weight 0.3 --dim 16 --seed 0 --device cuda --tag w0.3
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik nb --protein --protein-weight 3 --dim 16 --seed 1 --device cuda --tag w3
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P1 --rna-lik nb --protein --protein-weight 3 --dim 16 --seed 0 --device cuda --tag w3
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P5 --rna-lik nb --protein --protein-weight 3 --dim 16 --seed 0 --device cuda --tag w3
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik nb --protein --protein-weight 10 --dim 16 --seed 0 --device cuda --tag w10
+python scripts/run_experiment.py --dataset pbmc --mode full --rna-lik nb --protein --protein-weight 10 --dim 16 --seed 2 --device cuda --tag w10
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P3 --rna-lik nb --protein --protein-weight 10 --dim 16 --seed 0 --device cuda --tag w10
+python scripts/run_experiment.py --dataset pbmc --mode lodo --lodo-donor P7 --rna-lik nb --protein --protein-weight 10 --dim 16 --seed 0 --device cuda --tag w10

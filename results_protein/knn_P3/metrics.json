@@ -1,0 +1,9 @@
+{
+  "method": "knn",
+  "donor": "P3",
+  "n_proteins": 213,
+  "time_s": 5.0,
+  "pearson_mean": 0.5071665048599243,
+  "pearson_median": 0.4906785786151886,
+  "spearman_mean": 0.4405013378910607
+}

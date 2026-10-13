@@ -1,0 +1,9 @@
+{
+  "method": "scene_nb_latentknn",
+  "donor": "P8",
+  "n_proteins": 213,
+  "time_s": 47.3,
+  "pearson_mean": 0.4598640203475952,
+  "pearson_median": 0.43763357400894165,
+  "spearman_mean": 0.3958811887378678
+}
