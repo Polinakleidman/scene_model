@@ -26,23 +26,23 @@ def code(t):
 
 
 md(r"""
-# Трек A: мультимодальная SCENE — результаты
+# Track A: multimodal SCENE — results
 
-**Проект:** *Joint cell–gene–protein embeddings for interpreting drug responses: a stress test of SCENE* (курс CBIO7215).
-**Трек A (ML):**
-1. Добавить в SCENE белки (CITE-seq) как третий тип точек.
-2. Проверить другие правдоподобия для РНК.
-3. Научиться вкладывать новых доноров без переобучения.
-4. Сравнить с totalVI и scVI.
+**Project:** *Joint cell–gene–protein embeddings for interpreting drug responses: a stress test of SCENE* (course CBIO7215).
+**Track A (ML):**
+1. Add surface proteins (CITE-seq) to SCENE as a third type of point.
+2. Test other likelihoods for RNA.
+3. Embed new donors without retraining.
+4. Compare with totalVI and scVI.
 
-Код — `scene_mm/`, описание модели и **гипотезы, записанные до получения результатов**, — в `scene_mm/README.md`.
+Code: `scene_mm/`. The model and the **hypotheses written down before any results** are in `scene_mm/README.md`.
 
-### Главное
-- **Модель работает и совпадает с авторами:** RNA-only ZIP даёт те же AUC, PR-AUC и F1, что код авторов, до 3–4-го знака.
-- **Белки встают рядом со своими генами:** медианный перцентиль своего гена 0.4–3% среди ~14–21 тыс. генов; при случайном расположении было бы 50%. Лучше всего встают маркеры линий (CD16 ↔ *FCGR3A*, CD20 ↔ *MS4A1*, CD127 ↔ *IL7R*). Хуже всего — белки без сигнала в крови. Доля сигнала в счёте белка объясняет это на обоих датасетах (Spearman ≈ −0.65).
-- **Белки улучшают кластеризацию тонких типов клеток** умеренно, и **заметно улучшают перенос меток на новых доноров:** fold-in 0.83 → 0.90.
-- **NB не хуже ZIP:** её «плохой» deviance — артефакт метрики, которая предполагает дисперсию, равную среднему. По отложенному правдоподобию, правильной метрике для разных семейств, NB лучше.
-- **Против totalVI:** по точности сравнимо, но не лучше (0.90 против 0.91). Выигрыш SCENE в интерпретируемости: гены и белки в одном пространстве с клетками.
+### Summary
+- **The model works and matches the authors' code:** RNA-only ZIP gives the same AUC, PR-AUC and F1 as the authors' implementation to the 3rd–4th decimal.
+- **Proteins land next to their own genes:** the median percentile of the own gene is 0.4–3% among ~14–21k genes (random placement: 50%). Lineage markers work best (CD16 ↔ *FCGR3A*, CD20 ↔ *MS4A1*, CD127 ↔ *IL7R*); proteins with no signal in blood work worst. The signal share of a protein's count explains this on both datasets (Spearman ≈ −0.65).
+- **Proteins improve clustering of fine cell types** moderately, and **clearly improve label transfer to new donors:** fold-in 0.83 → 0.90.
+- **NB is not worse than ZIP:** its "bad" deviance is an artefact of a metric that assumes variance = mean. On held-out likelihood, the right metric across distribution families, NB is better.
+- **Against totalVI:** comparable accuracy, not better (0.90 vs 0.91; a tie with protein weight 3, section 7). SCENE's advantage is interpretability: genes and proteins share the space with the cells.
 """)
 
 code(r"""
@@ -57,60 +57,60 @@ pairs = pd.read_csv(T / "protein_pairs.csv"); calib = pd.read_csv(T / "likelihoo
 theta = pd.read_csv(T / "likelihood_theta.csv"); psig = pd.read_csv(T / "protein_signal.csv")
 LAB = {"pbmc": "celltype.l2", "neurips": "cell_type"}
 LIKS = ["zip", "nb", "zip_decoupled"]; LIKN = {"zip": "ZIP", "nb": "NB", "zip_decoupled": "ZIP-decoupled"}
-DSN = {"pbmc": "PBMC (30k клеток, 217 белков)", "neurips": "NeurIPS BMMC (30k клеток, 134 белка)"}
+DSN = {"pbmc": "PBMC (30k cells, 217 proteins)", "neurips": "NeurIPS BMMC (30k cells, 134 proteins)"}
 plt.rcParams.update({"figure.dpi": 110, "font.size": 9, "axes.spines.top": False, "axes.spines.right": False})
 def ms(s): return f"{s.mean():.3f} ± {s.std():.3f}"
 """)
 
 md(r"""
-## 1. Что построено
+## 1. What was built
 
-**Модель.** У каждой клетки одна точка $z_i$, общая для всех модальностей. У генов свои точки $w_j$, у белков — $v_k$. Сродство клетки и гена:
+**Model.** Each cell has one point $z_i$, shared by all modalities. Genes have their own points $w_j$, proteins $v_k$. The cell–gene affinity is
 $$\eta_{ij} = \psi_i + \rho_j + \textstyle\sum_\ell g^{(\ell)}_{b_\ell(i),j} - \lVert z_i - w_j\rVert$$
-Здесь $\psi_i$ и $\rho_j$ — числа: эффекты клетки и гена (в статье $\omega_j$); расстояние евклидово, без квадрата, как в коде авторов.
+Here $\psi_i$ and $\rho_j$ are scalars: cell and gene effects ($\omega_j$ in the paper). The distance is Euclidean, not squared, as in the authors' code.
 
-| Модальность | Правдоподобие |
+| Modality | Likelihood |
 |---|---|
-| РНК `zip` | как у авторов: $P(x>0)=\sigma(\alpha\eta)$, положительные счёты — Пуассон без нуля с $\lambda = e^\eta$ |
-| РНК `nb` | отрицательное биномиальное со средним $e^\eta$ и своей дисперсией $\theta_j$ на ген |
-| РНК `zip_decoupled` | как `zip`, но у вероятности детекции свои эффекты клетки и гена |
-| **Белки** `nb_bg` | NB со средним $\mu_{ik} = e^{\psi_i}\big(e^{\beta_k} + e^{\rho_k - \lVert z_i - v_k\rVert}\big)$: фон + сигнал |
+| RNA `zip` | as in the paper: $P(x>0)=\sigma(\alpha\eta)$, positive counts zero-truncated Poisson with $\lambda = e^\eta$ |
+| RNA `nb` | negative binomial with mean $e^\eta$ and a dispersion $\theta_j$ per gene |
+| RNA `zip_decoupled` | like `zip`, but detection has its own cell and gene effects |
+| **Proteins** `nb_bg` | NB with mean $\mu_{ik} = e^{\psi_i}\big(e^{\beta_k} + e^{\rho_k - \lVert z_i - v_k\rVert}\big)$: background + signal |
 
-Фон $\beta_k$ — это «эмбиентные» антитела, которые прилипают ко всем клеткам. Белок далеко от клетки остаётся на уровне фона.
+The background $\beta_k$ models ambient antibody that sticks to every cell. A protein far from a cell stays at background level, not at zero.
 
-**Новые доноры:**
-- **агрегация** (без обучения): клетка = взвешенное среднее точек её генов и белков, вес = счёт / средний счёт признака;
-- **fold-in**: всё, что относится к признакам, заморожено; учатся только новые клетки и строка батч-эффекта нового донора (200 эпох).
+**New donors:**
+- **aggregation** (no training): a cell is the weighted mean of the points of its genes and proteins, weight = count / mean count of the feature;
+- **fold-in**: everything feature-related is frozen; only the new cells and the new donor's batch row are trained (200 epochs).
 
-**Данные:**
-- PBMC CITE-seq (Hao 2021): та же подвыборка 30k клеток, что в воспроизведении, 8 доноров, 30 тонких типов `celltype.l2`;
-- NeurIPS 2021 BMMC CITE-seq: 30k случайных клеток, 45 типов, 12 батчей.
+**Data:**
+- PBMC CITE-seq (Hao 2021): the same 30k-cell subset as in the reproduction, 8 donors, 30 fine types `celltype.l2`;
+- NeurIPS 2021 BMMC CITE-seq: 30k random cells, 45 types, 12 batches.
 
-**Сетка:** 132 прогона на двух RTX 5000 Ada, ~7 ч.
-- Полные прогоны: {РНК, РНК+белок} × 3 правдоподобия × {3D, 16D} × 2 датасета × 3 сида.
-- LODO на PBMC: 8 доноров × 4 модели.
-- scVI и totalVI.
+**Grid:** 132 runs on two RTX 5000 Ada GPUs, ~7 h.
+- Full runs: {RNA, RNA+protein} × 3 likelihoods × {3D, 16D} × 2 datasets × 3 seeds.
+- Leave-one-donor-out (LODO) on PBMC: 8 donors × 4 models.
+- scVI and totalVI.
 
-**Проверка совпадения с авторами.** RNA-only ZIP, 2000 клеток PBMC, 16D, 600 эпох:
+**Check against the authors' code.** RNA-only ZIP, 2000 PBMC cells, 16D, 600 epochs:
 
 | | AUC | PR-AUC | F1 | deviance |
 |---|---|---|---|---|
-| код авторов, сиды 0/1 | 0.9236 / 0.9236 | 0.9194 / 0.9192 | 0.8477 / 0.8481 | 0.538 / 0.575 |
-| `scene_mm`, сиды 0/1 | 0.9235 / 0.9235 | 0.9193 / 0.9192 | 0.8477 / 0.8479 | 0.583 / 0.546 |
+| authors' code, seeds 0/1 | 0.9236 / 0.9236 | 0.9194 / 0.9192 | 0.8477 / 0.8481 | 0.538 / 0.575 |
+| `scene_mm`, seeds 0/1 | 0.9235 / 0.9235 | 0.9193 / 0.9192 | 0.8477 / 0.8479 | 0.583 / 0.546 |
 """)
 
 # ---------------------------------------------------------------- H1
 md(r"""
-## 2. H1 — Правдоподобие для РНК
+## 2. H1 — Likelihood for RNA
 
-*Гипотеза (до результатов):* NB даст лучшее отложенное лог-правдоподобие, AUC у всех будет похожий, а decoupled-вариант немного улучшит AUC.
+*Hypothesis (before results):* NB gives a better held-out log-likelihood, AUC is similar for all, and the decoupled variant improves AUC slightly.
 
-Из обучения скрыто 10% ненулевых счётов, в ту же долю добавлено столько же настоящих нулей. Метрики:
-- **NLL** — отрицательный лог-правдоподобие скрытых значений. Меньше = лучше. **Единственная метрика, честно сравнимая между семействами распределений.**
-- **AUC** — отличает ли модель скрытые ненулевые от нулей по $P(x > 0)$.
-- **Poisson deviance** — метрика авторов для величины счёта, по $E[x \mid x > 0]$.
+10% of the non-zero counts are hidden from training, plus the same number of true zeros. Metrics:
+- **NLL**: negative log-likelihood of the hidden values. Lower is better. **The only metric that compares distribution families fairly.**
+- **AUC**: does the model separate hidden non-zeros from zeros using $P(x > 0)$.
+- **Poisson deviance**: the authors' metric for count size, using $E[x \mid x > 0]$.
 
-Среднее ± стандартное отклонение по 3 сидам.
+Mean ± standard deviation over 3 seeds.
 """)
 code(r"""
 t = full.assign(lik=full.likelihood.map(LIKN)).groupby(["dataset", "dim", "modality", "lik"]).agg(
@@ -121,15 +121,15 @@ code(r"""
 fig, axes = plt.subplots(2, 3, figsize=(11, 5.2))
 for r, ds in enumerate(["pbmc", "neurips"]):
     d = full[(full.dataset == ds) & (full.dim == 16)]
-    for c, (col, name) in enumerate([("rna_heldout_nll", "отложенный NLL (меньше = лучше)"), ("rna_auc_roc", "AUC детекции"),
-                                     ("rna_poisson_deviance", "Poisson deviance (меньше = лучше)")]):
+    for c, (col, name) in enumerate([("rna_heldout_nll", "held-out NLL (lower = better)"), ("rna_auc_roc", "detection AUC"),
+                                     ("rna_poisson_deviance", "Poisson deviance (lower = better)")]):
         ax = axes[r, c]
         lows, highs = [], []
         for k, mod in enumerate(["rna", "rna+prot"]):
             g = d[d.modality == mod].groupby("likelihood")[col]
             m_, s_ = np.array([g.mean()[l] for l in LIKS]), np.nan_to_num(np.array([g.std()[l] for l in LIKS]))
             ax.bar(np.arange(3) + (k - 0.5) * 0.35, m_, 0.35, yerr=s_,
-                   label={"rna": "РНК", "rna+prot": "РНК + белок"}[mod], color=["#6c8ebf", "#d79b00"][k])
+                   label={"rna": "RNA", "rna+prot": "RNA + protein"}[mod], color=["#6c8ebf", "#d79b00"][k])
             lows.append((m_ - s_).min()); highs.append((m_ + s_).max())
         lo, hi = min(lows), max(highs); pad = 0.25 * (hi - lo) + 1e-4
         ax.set_ylim(lo - pad, hi + pad)
@@ -138,15 +138,15 @@ axes[0, 0].legend(frameon=False, fontsize=7)
 plt.tight_layout(); plt.show()
 """)
 md(r"""
-**Итог по метрикам:**
-- **NB лучше по NLL** на обоих датасетах: PBMC 1.173 против 1.190 у ZIP; NeurIPS 1.226 против 1.307.
-- **AUC одинаковый** у всех трёх: ~0.926 и ~0.897.
-- **Deviance у NB заметно хуже.**
-- Decoupled не улучшил AUC. Эта часть гипотезы **не подтвердилась**.
+**Metrics in short:**
+- **NB is better on NLL** on both datasets: PBMC 1.173 vs 1.190 for ZIP; NeurIPS 1.226 vs 1.307.
+- **AUC is the same** for all three: ~0.926 and ~0.897.
+- **NB's deviance is clearly worse.**
+- Decoupled did not improve AUC. That part of the hypothesis is **not supported**.
 
-### Почему у NB хуже deviance при лучшем NLL
+### Why NB has worse deviance but better NLL
 
-Обученные модели (PBMC, только РНК, 16D, seed 0) пересчитаны точно на тех же скрытых значениях, и метрики разложены по величине наблюдаемого счёта:
+The trained models (PBMC, RNA only, 16D, seed 0) were re-evaluated on exactly the same hidden values, with the metrics split by the size of the observed count:
 """)
 code(r"""
 c = calib[calib.bin != "zeros (true negatives)"].copy()
@@ -162,31 +162,31 @@ for lik, col in [("zip", "#6c8ebf"), ("nb", "#b85450")]:
     axes[0].plot(order, d.mean_pred_given_pos / d.mean_obs, "o-", color=col, label=LIKN[lik])
     axes[1].plot(order, d.mean_deviance, "o-", color=col, label=LIKN[lik])
     axes[2].plot(order, d.mean_nll, "o-", color=col, label=LIKN[lik])
-axes[0].axhline(1, color="grey", lw=0.8); axes[0].set_title("предсказано / наблюдено (1 = идеально)", fontsize=8)
-axes[1].set_title("Poisson deviance по корзинам", fontsize=8); axes[2].set_title("NLL по корзинам", fontsize=8)
-for a in axes: a.set_xlabel("наблюдаемый счёт")
+axes[0].axhline(1, color="grey", lw=0.8); axes[0].set_title("predicted / observed (1 = perfect)", fontsize=8)
+axes[1].set_title("Poisson deviance by bin", fontsize=8); axes[2].set_title("NLL by bin", fontsize=8)
+for a in axes: a.set_xlabel("observed count")
 axes[0].legend(frameon=False); plt.tight_layout(); plt.show()
-display(Markdown(f"Дисперсия NB по генам: медиана $\\theta$ = {theta.theta.median():.1f}; у {100 * (theta.theta < 1).mean():.0f}% генов $\\theta < 1$ (сильная сверхдисперсия)."))
+display(Markdown(f"NB dispersion per gene: median $\\theta$ = {theta.theta.median():.1f}; {100 * (theta.theta < 1).mean():.0f}% of genes have $\\theta < 1$ (strong over-dispersion)."))
 """)
 md(r"""
-**Вывод по H1**
-- **На единицах** (62% всех скрытых ненулевых значений) NB лучше ZIP по обеим метрикам: NLL 1.87 против 1.93. На истинных нулях модели одинаковы (NLL 0.069).
-- **На счётах 2–9** NB немного хуже по NLL (например, 2.56 против 2.50 на двойках), а начиная с 5 — и по deviance.
-- Основной проигрыш NB по deviance — **большие счёты (≥ 20, 3.4% ненулевых), на них приходится ~48% всего её deviance.** Там NB занижает среднее (предсказывает ~39 при наблюдаемых 51; ZIP — 48). Большой счёт она объясняет **широким хвостом** распределения, а не поднятием среднего.
-- Poisson deviance предполагает, что дисперсия равна среднему, поэтому сильно штрафует за заниженное среднее.
-- Лог-правдоподобие учитывает хвост, и по нему **NB на тех же больших счётах лучше** (4.32 против 4.66).
-- В сумме по всем скрытым значениям NB лучше по NLL за счёт самых частых единиц и больших счётов.
+**Conclusion for H1**
+- **On counts of 1** (62% of all hidden non-zeros) NB beats ZIP on both metrics: NLL 1.87 vs 1.93. On true zeros the models are equal (NLL 0.069).
+- **On counts of 2–9** NB is slightly worse on NLL (e.g. 2.56 vs 2.50 for twos), and from 5 upwards also on deviance.
+- NB's main loss on deviance is **large counts (≥ 20, 3.4% of non-zeros), which make up ~48% of its total deviance.** There NB under-predicts the mean (~39 vs an observed 51; ZIP 48). It explains a large count with its **heavy tail** rather than by raising the mean.
+- Poisson deviance assumes variance = mean, so it heavily penalises an under-predicted mean.
+- Log-likelihood accounts for the tail, and on it **NB is better on the same large counts** (4.32 vs 4.66).
+- Over all hidden values, NB wins on NLL thanks to the most frequent counts (ones) and the large counts.
 
-**Следствие для статьи и отчёта:** Poisson deviance авторов пригодна для сравнения внутри пуассоновского семейства, но не между ZIP и NB. **H1 подтверждена** для NB, **не подтверждена** для decoupled-варианта.
+**Implication:** the authors' Poisson deviance is fine for comparisons within the Poisson family, but not between ZIP and NB. **H1 is supported** for NB and **not supported** for the decoupled variant.
 """)
 
 # ---------------------------------------------------------------- H2
 md(r"""
-## 3. H2 — Помогают ли белки различать типы клеток
+## 3. H2 — Do proteins help separate cell types?
 
-*Гипотеза:* белки улучшат кластеризацию тонких типов клеток (NMI и ARI).
+*Hypothesis:* proteins improve clustering of fine cell types (NMI and ARI).
 
-KMeans с $k$ = числу типов на вложении клеток против разметки: PBMC `celltype.l2` (30 типов), NeurIPS `cell_type` (45 типов). Среднее ± стандартное отклонение по 3 сидам, 16D. Для сравнения — scVI и totalVI (16D, 3 сида).
+KMeans with $k$ = number of types on the cell embedding, compared with the labels: PBMC `celltype.l2` (30 types), NeurIPS `cell_type` (45 types). Mean ± standard deviation over 3 seeds, 16D. For comparison: scVI and totalVI (16D, 3 seeds).
 """)
 code(r"""
 rows = []
@@ -195,12 +195,12 @@ for ds, lab in LAB.items():
     for mod in ["rna", "rna+prot"]:
         for lik in LIKS:
             s = d[(d.modality == mod) & (d.likelihood == lik)]
-            rows.append({"датасет": ds, "модель": f"SCENE {'РНК' if mod == 'rna' else 'РНК+белок'} {LIKN[lik]}",
+            rows.append({"dataset": ds, "model": f"SCENE {'RNA' if mod == 'rna' else 'RNA+protein'} {LIKN[lik]}",
                          "NMI": ms(s[f"{lab}_nmi"]), "ARI": ms(s[f"{lab}_ari"])})
     for m in ["scvi", "totalvi"]:
         s = bfull[(bfull.dataset == ds) & (bfull.model == m) & (bfull.label == lab)]
-        rows.append({"датасет": ds, "модель": {"scvi": "scVI (РНК)", "totalvi": "totalVI (РНК+белок)"}[m], "NMI": ms(s.nmi), "ARI": ms(s.ari)})
-pd.DataFrame(rows).set_index(["датасет", "модель"])
+        rows.append({"dataset": ds, "model": {"scvi": "scVI (RNA)", "totalvi": "totalVI (RNA+protein)"}[m], "NMI": ms(s.nmi), "ARI": ms(s.ari)})
+pd.DataFrame(rows).set_index(["dataset", "model"])
 """)
 code(r"""
 fig, axes = plt.subplots(1, 2, figsize=(10, 3.2))
@@ -209,32 +209,32 @@ for ax, (ds, lab) in zip(axes, LAB.items()):
     for k, mod in enumerate(["rna", "rna+prot"]):
         g = d[d.modality == mod].groupby("likelihood")[f"{lab}_nmi"]
         ax.bar(np.arange(3) + (k - 0.5) * 0.35, [g.mean()[l] for l in LIKS], 0.35, yerr=[g.std()[l] for l in LIKS],
-               color=["#6c8ebf", "#d79b00"][k], label={"rna": "SCENE РНК", "rna+prot": "SCENE РНК + белок"}[mod])
+               color=["#6c8ebf", "#d79b00"][k], label={"rna": "SCENE RNA", "rna+prot": "SCENE RNA + protein"}[mod])
     for j, (m, col) in enumerate([("scvi", "#82b366"), ("totalvi", "#9673a6")]):
         v = bfull[(bfull.dataset == ds) & (bfull.model == m) & (bfull.label == lab)].nmi.mean()
         ax.axhline(v, color=col, ls="--", lw=1.2, label={"scvi": "scVI", "totalvi": "totalVI"}[m])
     ax.set_xticks(range(3)); ax.set_xticklabels([LIKN[l] for l in LIKS]); ax.set_ylim(0.55, 0.73)
-    ax.set_title(f"{ds.upper()}: NMI по тонким типам ({lab})", fontsize=8)
+    ax.set_title(f"{ds.upper()}: NMI on fine types ({lab})", fontsize=8)
 axes[0].legend(frameon=False, fontsize=7, loc="lower left"); plt.tight_layout(); plt.show()
 """)
 md(r"""
-**Вывод по H2 — подтверждена, эффект умеренный.**
-- Белки повышают NMI при всех трёх правдоподобиях на обоих датасетах. PBMC: ZIP 0.645 → 0.667, NB 0.617 → 0.679. NeurIPS: +0.01–0.02.
-- Лучшая мультимодальная SCENE на уровне scVI и немного ниже totalVI.
-- Больше всего белки помогают в PBMC — там 217 белков, и подтипы T- и NK-клеток определяются именно поверхностными маркерами.
+**Conclusion for H2: supported, moderate effect.**
+- Proteins raise NMI for all three likelihoods on both datasets. PBMC: ZIP 0.645 → 0.667, NB 0.617 → 0.679. NeurIPS: +0.01–0.02.
+- The best multimodal SCENE is level with scVI and slightly below totalVI (with protein weight 3 it reaches 0.702 vs 0.707, section 7).
+- Proteins help most on PBMC: it has 217 proteins, and T and NK subtypes are defined by surface markers.
 """)
 
 # ---------------------------------------------------------------- H3
 md(r"""
-## 4. H3 — Белок рядом со своим геном
+## 4. H3 — Each protein next to its own gene
 
-*Гипотеза:* в общем пространстве белок ближе к своему гену, чем случайный ген.
+*Hypothesis:* in the joint space a protein is closer to its own gene than a random gene is.
 
-Для каждого белка с известным геном (словарь ADT → ген, ~110 пар на датасет) берутся все гены и сортируются по расстоянию до белка. Метрика — **перцентиль своего гена** в этом списке: 0 = свой ген ближайший, 0.5 = как у случайного.
+For each protein with a known gene (hand-made ADT → gene dictionary, ~110 pairs per dataset), all genes are ranked by distance to the protein. The metric is the **percentile of the own gene** in that list: 0 = the own gene is the nearest, 0.5 = like a random gene.
 """)
 code(r"""
 s = full[full.modality == "rna+prot"].assign(lik=lambda d: d.likelihood.map(LIKN)).groupby(["dataset", "dim", "lik"]).agg(
-    пар=("pg_n_pairs", "first"), медианный_перцентиль=("pg_median_rank", ms), доля_в_топ1=("pg_top1", ms), доля_в_топ5=("pg_top5", ms))
+    pairs=("pg_n_pairs", "first"), median_percentile=("pg_median_rank", ms), share_top1=("pg_top1", ms), share_top5=("pg_top5", ms))
 s
 """)
 code(r"""
@@ -244,30 +244,30 @@ for ax, ds in zip(axes, ["pbmc", "neurips"]):
         for lik, col in [("zip", "#6c8ebf"), ("nb", "#b85450")]:
             r = np.sort(pairs[(pairs.dataset == ds) & (pairs.dim == dim) & (pairs.likelihood == lik)].rank_pct)
             ax.plot(r, np.arange(1, len(r) + 1) / len(r), ls, color=col, label=f"{LIKN[lik]} {dim}D")
-    xs = np.r_[np.linspace(0, 0.01, 200), np.logspace(-2, 0, 400)]; ax.plot(xs, xs, color="grey", lw=0.8, label="случайно")
+    xs = np.r_[np.linspace(0, 0.01, 200), np.logspace(-2, 0, 400)]; ax.plot(xs, xs, color="grey", lw=0.8, label="random")
     ax.set_xscale("symlog", linthresh=0.01); ax.set_xlim(0, 1)
-    ax.set_xlabel("перцентиль своего гена (0 = ближайший)"); ax.set_ylabel("доля белков"); ax.set_title(DSN[ds], fontsize=8)
+    ax.set_xlabel("percentile of own gene (0 = nearest)"); ax.set_ylabel("fraction of proteins"); ax.set_title(DSN[ds], fontsize=8)
 axes[0].legend(frameon=False, fontsize=7); plt.tight_layout(); plt.show()
 """)
 md(r"""
-Кумулятивные кривые всех пар (все сиды). Кривая, прижатая к левому верхнему углу, значит, что почти все белки лежат у своего гена. Диагональ — случайное расположение.
+Cumulative curves over all pairs (all seeds). A curve hugging the top-left corner means almost every protein sits next to its gene. The grey curve is random placement (the x-axis is linear below 1% and logarithmic above).
 
-**Какие пары встают лучше и хуже всего** (PBMC, NB, 16D, среднее по 3 сидам):
+**Which pairs work best and worst** (PBMC, NB, 16D, mean over 3 seeds):
 """)
 code(r"""
 q = pairs[(pairs.dataset == "pbmc") & (pairs.dim == 16) & (pairs.likelihood == "nb")].groupby(["protein", "gene"]).rank_pct.mean().sort_values()
 best, worst = q.head(12).reset_index(), q.tail(12).reset_index()
-display(pd.concat([best.rename(columns=lambda c: f"лучшие: {c}"), worst.rename(columns=lambda c: f"худшие: {c}")], axis=1).round(4))
+display(pd.concat([best.rename(columns=lambda c: f"best: {c}"), worst.rename(columns=lambda c: f"worst: {c}")], axis=1).round(4))
 """)
 md(r"""
-**Лучшие** — классические маркеры линий: CD16 (NK, моноциты), CD20 (B-клетки), CD127 (T-клетки), CD3, HLA-DR, CD123 (pDC). У них свой ген ближайший из ~20 000.
+**Best**: classic lineage markers, CD16 (NK, monocytes), CD20 (B cells), CD127 (T cells), CD3, HLA-DR, CD123 (pDC). Their own gene is the nearest of ~20,000.
 
-**Худшие** — белки, которых в покоящейся крови почти нет:
-- маркеры активации: CTLA4, OX40/*TNFRSF4*, 4-1BB/*TNFRSF9*, GITR/*TNFRSF18*, PD-L1/L2;
-- нетипичные для крови: HER2/*ERBB2*, MCAM, ENG.
+**Worst**: proteins that are almost absent in resting blood:
+- activation markers: CTLA4, OX40/*TNFRSF4*, 4-1BB/*TNFRSF9*, GITR/*TNFRSF18*, PD-L1/L2;
+- proteins atypical for blood: HER2/*ERBB2*, MCAM, ENG.
 
-### Почему: сигнал против фона
-Для каждого белка по модели посчитана **доля сигнала** — средняя по клеткам доля предсказанного счёта, приходящаяся на слагаемое $e^{\rho_k - d}$, а не на фон $e^{\beta_k}$.
+### Why: signal versus background
+For each protein the model gives a **signal share**: the mean over cells of the fraction of the predicted count that comes from $e^{\rho_k - d}$ rather than from the background $e^{\beta_k}$.
 """)
 code(r"""
 fig, axes = plt.subplots(1, 2, figsize=(10, 3.4))
@@ -277,28 +277,28 @@ for ax, ds in zip(axes, ["pbmc", "neurips"]):
     ax.scatter(a.fg_share, a.rank_pct, s=12, alpha=0.7)
     for _, r in a[(a.rank_pct < 0.0005) | (a.rank_pct > 0.45)].iterrows():
         ax.annotate(r.protein, (r.fg_share, r.rank_pct), fontsize=6)
-    ax.set_yscale("symlog", linthresh=0.001); ax.set_xlabel("доля сигнала в счёте белка (1 − фон)")
-    ax.set_ylabel("перцентиль своего гена"); ax.set_title(f"{ds.upper()}: Spearman ρ = {rho:+.2f} (p = {p:.0e})", fontsize=8)
+    ax.set_yscale("symlog", linthresh=0.001); ax.set_xlabel("signal share of protein count (1 − background)")
+    ax.set_ylabel("percentile of own gene"); ax.set_title(f"{ds.upper()}: Spearman ρ = {rho:+.2f} (p = {p:.0e})", fontsize=8)
 plt.tight_layout(); plt.show()
 out = []
 for ds in ["pbmc", "neurips"]:
     a = psig[psig.dataset == ds].groupby(["protein", "gene"]).mean(numeric_only=True)
-    out.append({"датасет": ds, **{f"ρ с {n}": round(spearmanr(a[c], a.rank_pct)[0], 2) for c, n in
-                [("fg_share", "долей сигнала"), ("gene_mean", "экспрессией гена"), ("protein_mean", "средним счётом белка")]}})
-display(pd.DataFrame(out).set_index("датасет"))
+    out.append({"dataset": ds, **{f"ρ with {n}": round(spearmanr(a[c], a.rank_pct)[0], 2) for c, n in
+                [("fg_share", "signal share"), ("gene_mean", "gene expression"), ("protein_mean", "mean protein count")]}})
+display(pd.DataFrame(out).set_index("dataset"))
 """)
 md(r"""
-**Вывод по H3 — подтверждена, и сильно.**
-- Медианный перцентиль своего гена в 16D: **0.4–3%**.
-- Чем большая доля счёта белка — сигнал, тем ближе он к своему гену. Связь одинаково сильная на обоих датасетах (ρ ≈ −0.65).
-- Экспрессия гена объясняет это только на PBMC, а доля сигнала — на обоих.
+**Conclusion for H3: supported, strongly.**
+- Median percentile of the own gene in 16D: **0.4–3%**.
+- The larger the signal share of a protein's count, the closer it is to its gene. The relation is equally strong on both datasets (ρ ≈ −0.65).
+- Gene expression explains this only on PBMC; the signal share explains it on both.
 
-Иначе говоря, модель **не ошибается** на части белков: белки без биологического сигнала в данных просто не к чему привязать. Модель честно относит их счёт к фону.
+In other words, the model is **not wrong** on some proteins: proteins with no biological signal in the data simply have nothing to anchor to, and the model honestly attributes their counts to background.
 
-**В 3D** связь слабее: медиана 10–14% на PBMC, 2–7% на NeurIPS. Трёх измерений мало, чтобы разместить ~20 тыс. генов, 200 белков и десятки типов клеток без наложений.
+**In 3D** the relation is weaker: median 10–14% on PBMC, 2–7% on NeurIPS. Three dimensions are not enough to place ~20k genes, 200 proteins and dozens of cell types without overlap.
 
-### Как это выглядит в общем пространстве
-PBMC, РНК + белок, NB, 16D. Для картинки 16-мерное пространство сжато в 2D методом UMAP, который сохраняет соседство точек. UMAP построен по клеткам (подвыборка 6000, цвет — `celltype.l1`), генам (подвыборка 3000, серые) и белкам-маркерам (чёрные) вместе. Красные — гены этих белков; линия соединяет пару. Под картинкой — точный ранг своего гена в исходном 16-мерном пространстве, без искажений UMAP.
+### What it looks like in the joint space
+PBMC, RNA + protein, NB, 16D. For the picture, the 16-dimensional space is reduced to 2D with UMAP, which preserves neighbourhoods. The UMAP is built on cells (6000 subsampled, coloured by `celltype.l1`), genes (3000 subsampled, grey) and marker proteins (black) together. Red points are the genes of these proteins; a line joins each pair. Below the picture: the exact rank of the own gene in the original 16-dimensional space, without UMAP distortion.
 """)
 code(r"""
 emb = ad.read_h5ad("results/pbmc_full_rna+prot_nb_d16_s0/embedding.h5ad")
@@ -318,7 +318,7 @@ E = umap.UMAP(n_neighbors=30, min_dist=0.3, random_state=0).fit_transform(X)
 ec, eg, ep = E[:len(ci)], E[len(ci):len(ci) + len(gi)], E[len(ci) + len(gi):]
 lab = emb.obs["celltype.l1"].astype(str).to_numpy()[ci]
 fig, ax = plt.subplots(figsize=(8.5, 6.5))
-ax.scatter(eg[:, 0], eg[:, 1], s=1, color="lightgrey", alpha=0.5, label="гены (подвыборка)")
+ax.scatter(eg[:, 0], eg[:, 1], s=1, color="lightgrey", alpha=0.5, label="genes (subsample)")
 for i, l in enumerate(sorted(set(lab))):
     m = lab == l; ax.scatter(ec[m, 0], ec[m, 1], s=2, alpha=0.4, label=l, color=plt.cm.tab10(i))
 pair_rank = {}
@@ -329,128 +329,160 @@ for k, (p_, g) in enumerate(show_pairs):
     ax.annotate(p_, pv, fontsize=7, fontweight="bold"); ax.annotate(g, gv, fontsize=6, color="red", xytext=(3, -8), textcoords="offset points")
     d = np.linalg.norm(W - V[pnames.index(p_)], axis=1); pair_rank[f"{p_} → {g}"] = int((d < d[genes.index(g)]).sum()) + 1
 ax.legend(frameon=False, fontsize=7, markerscale=4, loc="upper right"); ax.set_xticks([]); ax.set_yticks([])
-ax.set_title("UMAP общего пространства: клетки, гены (серые), белки (чёрные) и их гены (красные)", fontsize=9); plt.show()
-display(Markdown("**Место своего гена среди всех ~20 700 генов по расстоянию до белка (в 16D, 1 = ближайший):** " +
+ax.set_title("UMAP of the joint space: cells, genes (grey), proteins (black) and their genes (red)", fontsize=9); plt.show()
+display(Markdown("**Rank of the own gene among all ~20,700 genes by distance to the protein (16D, 1 = nearest):** " +
                  ", ".join(f"{k}: **{v}**" for k, v in pair_rank.items())))
 
 """)
 md(r"""
-Как читать картинку:
-- **Белки** (чёрные) встают **внутрь «своих» кластеров клеток**: CD19, CD20 и CD1c у B-клеток, CD14 у моноцитов, CD16 и CD56 у NK, CD3, CD4 и CD127 у T-клеток.
-- **Их гены** (красные) остаются в облаке генов, на его краю, обращённом к тому же типу клеток.
+How to read the picture:
+- **Proteins** (black) sit **inside their own cell clusters**: CD19, CD20 and CD1c in B cells, CD14 in monocytes, CD16 and CD56 in NK cells, CD3, CD4 and CD127 in T cells.
+- **Their genes** (red) stay in the gene cloud, on its edge facing the same cell type.
 
-Значит, белок ближе к клеткам, чем к генам. Это ожидаемо: у белков плотные и большие счёты, и они сильно определяют положение клетки. При этом **среди генов** свой ген — один из ближайших к белку:
-- у CD16, CD127 и CD20 — первый или второй из ~20 700;
-- у HLA-DR, CD123, CD3 — в первой десятке;
-- у CD4, CD8 и CD56 — хуже (ранг 250–1100, то есть топ-1.5–5%).
+So a protein is closer to cells than to genes. This is expected: protein counts are dense and large and strongly determine where a cell goes. Still, **among genes** the own gene is one of the nearest to the protein:
+- for CD16, CD127 and CD20 it is first or second of ~20,700;
+- for HLA-DR, CD123, CD3 it is in the top ten;
+- for CD4, CD8 and CD56 it is worse (rank 250–1100, i.e. top 1.5–5%).
 
-UMAP передаёт соседство приблизительно, поэтому длина линий — лишь иллюстрация. Точная проверка — ранги, посчитанные в 16D.
+UMAP preserves neighbourhoods only approximately, so line lengths are only an illustration. The exact test is the ranks computed in 16D.
 """)
 
 # ---------------------------------------------------------------- H4 / H5
 md(r"""
-## 5. H4 и H5 — Новые доноры (leave-one-donor-out, PBMC)
+## 5. H4 and H5 — New donors (leave-one-donor-out, PBMC)
 
-*Гипотезы:*
-- **H4:** fold-in переносит метки на нового донора почти так же хорошо, как референс, и лучше агрегации;
-- **H5:** totalVI — сильный бейзлайн, мультимодальная SCENE будет сравнимой, но не лучше.
+*Hypotheses:*
+- **H4:** fold-in transfers labels to a new donor almost as well as the reference, and better than aggregation;
+- **H5:** totalVI is a strong baseline; multimodal SCENE will be comparable, not better.
 
-Для каждого из 8 доноров модель обучается на остальных семи (донор — уровень батча). Затем клетки отложенного донора вкладываются одним из способов, и типы клеток переносятся с референса kNN (k = 15). Для scVI и totalVI используется стандартный путь scvi-tools для новых данных — **scArches**: веса референса заморожены, дообучаются только параметры новых данных. Среднее ± стандартное отклонение по 8 донорам.
+For each of the 8 donors the model is trained on the other seven (donor is a batch level). The held-out donor's cells are then embedded one way or another, and cell types are transferred from the reference by kNN (k = 15). scVI and totalVI use the standard scvi-tools route for new data, **scArches**: the reference weights are frozen and only the parameters for the new data are trained. Mean ± standard deviation over 8 donors.
 """)
 code(r"""
 def lodo_table(label):
     d = lodo[lodo.label == label].copy()
-    d["способ"] = d.embedding.map({"aggregate": "агрегация", "foldin": "fold-in", "scArches": "scArches"})
-    d["модель"] = d.model.str.replace("SCENE rna+prot", "SCENE РНК+белок").str.replace("SCENE rna", "SCENE РНК") \
-        .str.replace(" zip", " ZIP").str.replace(" nb", " NB").replace({"scvi": "scVI (РНК)", "totalvi": "totalVI (РНК+белок)"})
-    return d.groupby(["модель", "способ"]).agg(точность=("accuracy", ms), macro_F1=("macro_f1", ms), доноров=("accuracy", "size"))
-display(Markdown("**Тонкие типы (`celltype.l2`, 30 типов)**")); display(lodo_table("celltype.l2"))
-display(Markdown("**Крупные типы (`celltype.l1`, 8 типов)**")); display(lodo_table("celltype.l1"))
+    d["embedding"] = d.embedding.map({"aggregate": "aggregation", "foldin": "fold-in", "scArches": "scArches"})
+    d["model"] = d.model.str.replace("SCENE rna+prot", "SCENE RNA+protein").str.replace("SCENE rna", "SCENE RNA") \
+        .str.replace(" zip", " ZIP").str.replace(" nb", " NB").replace({"scvi": "scVI (RNA)", "totalvi": "totalVI (RNA+protein)"})
+    return d.groupby(["model", "embedding"]).agg(accuracy=("accuracy", ms), macro_F1=("macro_f1", ms), donors=("accuracy", "size"))
+display(Markdown("**Fine types (`celltype.l2`, 30 types)**")); display(lodo_table("celltype.l2"))
+display(Markdown("**Coarse types (`celltype.l1`, 8 types)**")); display(lodo_table("celltype.l1"))
 """)
 code(r"""
 d = lodo[lodo.label == "celltype.l2"].copy()
 d["key"] = d.model + " / " + d.embedding
 keys = ["SCENE rna zip / aggregate", "SCENE rna zip / foldin", "SCENE rna nb / foldin", "SCENE rna+prot zip / foldin",
         "SCENE rna+prot nb / aggregate", "SCENE rna+prot nb / foldin", "scvi / scArches", "totalvi / scArches"]
-names = ["SCENE РНК ZIP, агрегация", "SCENE РНК ZIP, fold-in", "SCENE РНК NB, fold-in", "SCENE РНК+белок ZIP, fold-in",
-         "SCENE РНК+белок NB, агрегация", "SCENE РНК+белок NB, fold-in", "scVI, scArches", "totalVI, scArches"]
+names = ["SCENE RNA ZIP, aggregation", "SCENE RNA ZIP, fold-in", "SCENE RNA NB, fold-in", "SCENE RNA+protein ZIP, fold-in",
+         "SCENE RNA+protein NB, aggregation", "SCENE RNA+protein NB, fold-in", "scVI, scArches", "totalVI, scArches"]
 fig, axes = plt.subplots(1, 2, figsize=(11, 3.6), sharey=True)
-for ax, metric, title in [(axes[0], "accuracy", "точность"), (axes[1], "macro_f1", "macro-F1")]:
+for ax, metric, title in [(axes[0], "accuracy", "accuracy"), (axes[1], "macro_f1", "macro-F1")]:
     for i, k in enumerate(keys):
         v = d[d.key == k].sort_values("donor")[metric].to_numpy()
         ax.scatter(np.full(len(v), i) + np.linspace(-0.15, 0.15, len(v)), v, s=12, alpha=0.7)
         ax.hlines(v.mean(), i - 0.3, i + 0.3, color="k", lw=1.5)
     ax.set_xticks(range(len(keys))); ax.set_xticklabels(names, rotation=35, ha="right", fontsize=7)
-    ax.set_title(f"Перенос тонких типов на отложенного донора — {title}", fontsize=8)
+    ax.set_title(f"Fine-type transfer to the held-out donor: {title}", fontsize=8)
 plt.tight_layout(); plt.show()
 """)
 md(r"""
-Точки — 8 отложенных доноров, чёрная черта — среднее.
+Dots are the 8 held-out donors, the black bar is the mean.
 
-**Вывод по H4 — подтверждена.**
-- Fold-in намного лучше агрегации: на тонких типах 0.83–0.90 против 0.48–0.53.
-- **Белки заметно помогают fold-in:** 0.83 → **0.90** по точности, 0.63 → **0.73** по macro-F1.
-- Агрегация без обучения на 30 тонких типах слабая. Усреднение генов «стягивает» клетку к центру пространства, и тонкие различия теряются. Для 8 крупных типов она работает лучше.
-- Fold-in одного донора (~4 тыс. клеток, 200 эпох) занимает секунды.
+**Conclusion for H4: supported.**
+- Fold-in is much better than aggregation: on fine types 0.83–0.90 vs 0.48–0.53.
+- **Proteins clearly help fold-in:** 0.83 → **0.90** accuracy, 0.63 → **0.73** macro-F1.
+- Aggregation without training is weak on 30 fine types: averaging gene positions pulls cells toward the centre of the space and fine differences are lost. It works better for the 8 coarse types.
+- Fold-in of one donor (~4k cells, 200 epochs) takes seconds.
 
-**Вывод по H5 — подтверждена.**
-- totalVI остаётся лучшим: 0.914 / 0.785. Мультимодальная SCENE близко: 0.896 / 0.726. Обе обходят scVI (0.879 / 0.712).
-- SCENE на уровне лучшего метода по точности и слегка уступает по macro-F1, то есть на редких типах.
-- Её преимущество — **интерпретируемость**: гены и белки лежат в одном пространстве с клетками (раздел 4). У totalVI и scVI такого нет.
+**Conclusion for H5: supported.**
+- totalVI stays best: 0.914 / 0.785. Multimodal SCENE is close: 0.896 / 0.726. Both beat scVI (0.879 / 0.712).
+- SCENE is level with the best method on accuracy and slightly behind on macro-F1, i.e. on rare types.
+- Its advantage is **interpretability**: genes and proteins share the space with the cells (section 4). totalVI and scVI have nothing like that.
 """)
 
 # ---------------------------------------------------------------- 3D vs 16D, summary
 md(r"""
-## 6. 3D против 16D
+## 6. 3D versus 16D
 """)
 code(r"""
 rows = []
 for ds, lab in LAB.items():
     for dim in [3, 16]:
         d = full[(full.dataset == ds) & (full.dim == dim) & (full.likelihood == "nb")]
-        rows.append({"датасет": ds, "размерность": f"{dim}D",
-                     "NMI (РНК)": d[d.modality == "rna"][f"{lab}_nmi"].mean(), "NMI (РНК+белок)": d[d.modality == "rna+prot"][f"{lab}_nmi"].mean(),
+        rows.append({"dataset": ds, "dimension": f"{dim}D",
+                     "NMI (RNA)": d[d.modality == "rna"][f"{lab}_nmi"].mean(), "NMI (RNA+protein)": d[d.modality == "rna+prot"][f"{lab}_nmi"].mean(),
                      "AUC": d.rna_auc_roc.mean(), "NLL": d.rna_heldout_nll.mean(),
-                     "белок↔ген: медиана": d[d.modality == "rna+prot"].pg_median_rank.mean(),
-                     "белок↔ген: в топ-5%": d[d.modality == "rna+prot"].pg_top5.mean()})
-pd.DataFrame(rows).set_index(["датасет", "размерность"]).round(3)
+                     "protein↔gene: median": d[d.modality == "rna+prot"].pg_median_rank.mean(),
+                     "protein↔gene: in top 5%": d[d.modality == "rna+prot"].pg_top5.mean()})
+pd.DataFrame(rows).set_index(["dataset", "dimension"]).round(3)
 """)
 md(r"""
-В 3D всё хуже, но не катастрофически:
-- AUC теряет ~0.005;
-- NMI теряет 0.05–0.10;
-- сильнее всего страдает соответствие «белок ↔ ген».
+3D is worse everywhere, but not catastrophically:
+- AUC loses ~0.005;
+- NMI loses 0.05–0.10;
+- the protein ↔ gene match suffers most.
 
-Это согласуется с воспроизведением: для предсказания детекции хватает очень малой размерности, а тонкая структура (типы, пары белок–ген) требует 8–16 измерений. **3D хорош для картинок, 16D — для анализа.**
+This agrees with the reproduction: a very low dimension is enough to predict detection, but fine structure (cell types, protein–gene pairs) needs 8–16 dimensions. **3D is good for pictures, 16D for analysis.**
 
-## 7. Итог по гипотезам
+## 7. Follow-up experiments
 
-| | Гипотеза (записана до результатов) | Результат |
+### Protein weight in the loss
+The loss is $-\sum\log P(\text{RNA}) - w\sum\log P(\text{protein})$. PBMC, NB, 16D; NMI over 3 seeds, new-donor transfer on donors P1, P3, P5, P7.
+
+| Protein weight $w$ | NMI (30 types) | New donor, accuracy / macro-F1 | Protein↔gene, median | RNA NLL |
+|---|---|---|---|---|
+| 0.1 | 0.626 | 0.850 / 0.634 | 3.8% | 1.173 |
+| 0.3 | 0.626 | 0.868 / 0.663 | 3.9% | 1.173 |
+| 1 (default) | 0.679 | 0.898 / 0.729 | 3.1% | 1.174 |
+| **3** | **0.702** | **0.918 / 0.779** | 3.0% | 1.176 |
+| 10 | 0.694 | 0.914 / 0.770 | 2.4% | 1.180 |
+
+More protein weight improves cell types and transfer at a small cost in RNA fit. At $w = 3$ SCENE ties totalVI on the same four donors (0.916 / 0.777) and nearly matches its NMI (0.707). Caveat: $w$ was chosen on the same data, without a separate validation split.
+
+### Isotype controls
+Isotype controls are antibodies that bind nothing, so their whole count is background. The model gives them a signal share of 0.003 (Rat-IgG2b), 0.005 (Rat-IgG1-2) and 0.007 (Rag-IgG2c), and 0.10 for Rat-IgG1-1, against a median of 0.42 for real proteins. The background term does what it was designed for.
+
+### Predicting the proteins of a new donor from RNA only
+The held-out donor's cells are placed using RNA only, then each protein is predicted per cell; the table gives the mean Pearson correlation over proteins, over 8 donors.
+
+| Method | Pearson r |
+|---|---|
+| totalVI (neural decoder, reference batches) | **0.531 ± 0.019** |
+| kNN on RNA (PCA of 3000 variable genes, k = 15) | 0.492 ± 0.017 |
+| SCENE positions + kNN | 0.474 ± 0.015 |
+| SCENE, protein read from distance (NB) | 0.434 ± 0.030 |
+| SCENE, protein read from distance (ZIP) | 0.414 ± 0.023 |
+
+totalVI beats kNN for all 8 donors, and kNN beats SCENE for all 8. **A negative result for SCENE**: each protein is read from one distance to one point, which cannot describe a protein that is high in two different cell types. SCENE positions + kNN is close to kNN on raw RNA, so the cell map itself is fine; the loss comes from the readout.
+
+## 8. Hypotheses: summary
+
+| | Hypothesis (written before results) | Result |
 |---|---|---|
-| H1 | NB лучше ZIP по отложенному правдоподобию; AUC похож; decoupled чуть лучше по AUC | ✅ NB лучше по NLL, AUC одинаковый. ❌ decoupled ничего не дал. Худший deviance у NB — артефакт метрики, а не модели |
-| H2 | белки улучшают кластеризацию тонких типов | ✅ умеренно (+0.01–0.06 NMI), на всех правдоподобиях и обоих датасетах |
-| H3 | белок ближе к своему гену, чем случайный ген | ✅ сильно: медиана 0.4–3%. Неудачи объясняются отсутствием сигнала (ρ ≈ −0.65) |
-| H4 | fold-in лучше агрегации и близок к референсу | ✅ 0.90 против 0.48 (тонкие типы); белки помогают fold-in (+0.07) |
-| H5 | totalVI сильный; SCENE сравнима, но не лучше | ✅ 0.896 против 0.914 по точности; SCENE лучше scVI |
+| H1 | NB beats ZIP on held-out likelihood; AUC similar; decoupled slightly better AUC | ✅ NB better on NLL, AUC the same. ❌ decoupled gave nothing. NB's worse deviance is an artefact of the metric, not of the model |
+| H2 | proteins improve clustering of fine types | ✅ moderately (+0.01–0.06 NMI), for all likelihoods on both datasets |
+| H3 | a protein is closer to its own gene than a random gene | ✅ strongly: median 0.4–3%. Failures are explained by lack of signal (ρ ≈ −0.65) |
+| H4 | fold-in beats aggregation and is close to the reference | ✅ 0.90 vs 0.48 (fine types); proteins help fold-in (+0.07) |
+| H5 | totalVI is strong; SCENE comparable, not better | ✅ 0.896 vs 0.914 accuracy (tie at protein weight 3); SCENE beats scVI |
 
-## 8. Ограничения
-- **Подвыборки:** 30k клеток на датасет, LODO только на PBMC, с одним сидом на донора.
-- **Кластеризация через KMeans** с $k$ = числу типов — грубая метрика: на неё влияет дисбаланс типов.
-- **Бейзлайны** (scVI, totalVI) с настройками по умолчанию (16D, 400 эпох), без подбора гиперпараметров. Для SCENE мы тоже ничего не подбирали, взяли настройки авторов.
-- **Словарь ADT → ген** составлен вручную (~110 однозначных пар на датасет). Белки без однозначного гена, например изотипические контроли и TCR-сегменты, в тест H3 не входят.
-- **Вес белков** в правдоподобии = 1 (как у РНК). Мы его не подбирали, а он влияет на баланс модальностей.
+## 9. Limitations
+- **Subsets:** 30k cells per dataset; LODO only on PBMC, with one seed per donor.
+- **Clustering by KMeans** with $k$ = number of types is a coarse metric, sensitive to type imbalance.
+- **Baselines** (scVI, totalVI) with default settings (16D, 400 epochs), no hyperparameter search. SCENE was not tuned either; we used the authors' settings.
+- **The ADT → gene dictionary** is hand-made (~110 unambiguous pairs per dataset). Proteins without an unambiguous gene, such as isotype controls and TCR segments, are not in the H3 test.
+- **The H3 test** compares with all genes, not with genes of matched expression.
+- **No ablation** of the protein background term.
 
-## 9. Как воспроизвести
+## 10. How to reproduce
 ```
-python scripts/prepare_data.py all                   # данные
-python scripts/make_grid.py cuda                     # сетка из 132 прогонов
-sbatch --export=ALL,WORKER=0 scripts/run_grid.sbatch # и WORKER=1 (две станции ws-ia)
-python scripts/collect_results.py                    # таблицы
-python scripts/analyze_likelihood.py mps             # калибровка ZIP против NB
-python scripts/analyze_proteins.py mps               # сигнал белков
-python scripts/build_trackA_report.py                # этот отчёт
+python scripts/prepare_data.py all                   # data
+python scripts/make_grid.py cuda                     # grid of 132 runs
+sbatch --export=ALL,WORKER=0 scripts/run_grid.sbatch # and WORKER=1 (two GPU workstations)
+python scripts/collect_results.py                    # tables
+python scripts/analyze_likelihood.py mps             # ZIP vs NB calibration
+python scripts/analyze_proteins.py mps               # protein signal
+python scripts/build_trackA_report.py                # this report
 ```
-Все эмбеддинги лежат в `results/<run_id>/embedding.h5ad`: клетки в `obsm["X_scene"]`, гены в `varm["W_rna"]`, белки в `uns["protein_positions"]`. Трек B может использовать их напрямую.
+All embeddings are in `results/<run_id>/embedding.h5ad`: cells in `obsm["X_scene"]`, genes in `varm["W_rna"]`, proteins in `uns["protein_positions"]`.
 """)
 
 nb = nbf.v4.new_notebook(cells=cells, metadata={"kernelspec": {"name": "python3", "display_name": "Python 3", "language": "python"}})

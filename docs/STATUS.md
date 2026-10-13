@@ -2,7 +2,7 @@ cltk
 
 # Project status: multimodal SCENE
 
-*Updated 2026-10-02. Full plan: [PROJECT_PLAN.md](PROJECT_PLAN.md). Track A details: [trackA_report.html](../trackA_report.html), [scene_mm/README.md](../scene_mm/README.md). Russian version: [STATUS_ru.md](STATUS_ru.md).*
+*Updated 2026-10-02. Full plan: [PROJECT_PLAN.md](PROJECT_PLAN.md). Track A details: [trackA_report.html](../trackA_report.html), [scene_mm/README.md](../scene_mm/README.md).*
 
 ## 0. Reproduction of the paper: done
 
@@ -68,7 +68,6 @@ Full report: SCENE_full_report.html (GitHub Releases).
 
 ## Deliverables
 
-- [X] Presentation, 53 slides (in Russian): https://claude.ai/artifact/9rx2Gvc2oZPQswtGpJ8A86
-  - Speaker names, date and contacts still need to be filled in.
+- [X] Track A results and final presentation
 - [ ] Track B results
 - [ ] Final course report

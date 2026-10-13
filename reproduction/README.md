@@ -65,7 +65,7 @@ squeue -u $USER;  tail -f logs/queue.log             # status / progress;  scanc
 | **SIMBA/TCR** (`WITH_SIMBA_TCR=1`, `setup_simba_tcr.sh`, `run_simba.sbatch`): `dgl==2.2.0` installed from data.dgl.ai; torch 2.3.0 CPU build; other versions as in `environment_simba.yaml` | dgl 2.2.0 is not on PyPI; SIMBA trains on CPU |
 | TCR conversion via `prepare_tcr_fix.R` + `prepare_tcr_fix.py` instead of `scripts/prepare_tcr.R` | `Seurat::as.SingleCellExperiment` fails with current SeuratObject (`PackageCheck()` is defunct). The result matches the reference size, 9 492 × 17 840 |
 | SCENE-TCR regulon evaluation run with `--n_jobs 12` (`finish_tcr_figs.sh`) | With `permutation_rng=independent`, each module has its own seed stream, so results do not depend on `n_jobs` (1 core: ~9 h) |
-| `SCENE_reproduction_report.ipynb` (built by `build_report.py`) | Paper summary, architecture and all reproduced figures, with comments |
+| `SCENE_full_report.html` (built by `build_full_report.py`, attached to the GitHub release) | Paper summary, architectures, metrics and all reproduced figures, with comments |
 
 ## Measured speed (MPS, 16D, ZIP)
 

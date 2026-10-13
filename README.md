@@ -22,7 +22,7 @@ $$
 where $\psi$ is cell depth, $\rho$ the gene/protein level, $g$ a (low-rank) batch offset and $e^{\beta_k}$
 the antibody background. The loss is $-\sum \log P(\text{RNA}) - w\sum\log P(\text{protein})$ ($w=3$ works best),
 optimised with full-batch AdamW. The original SCENE is the RNA part with a zero-inflated Poisson (hurdle) likelihood.
-Full derivations: [docs/SCENE_math.md](docs/SCENE_math.md) (in Russian).
+Full derivations: [docs/SCENE_math.md](docs/SCENE_math.md).
 
 ## Results
 
@@ -48,7 +48,7 @@ Full derivations: [docs/SCENE_math.md](docs/SCENE_math.md) (in Russian).
 | H5: comparable to totalVI, not better | Supported: 0.918 vs 0.916 (leave-one-donor-out, weight 3) |
 | Extra: predict proteins of a new donor from RNA | Negative: SCENE 0.43–0.47 vs kNN 0.49 vs totalVI 0.53 (Pearson r) |
 
-Details and figures: [trackA_report.html](trackA_report.html) (Russian), [scene_mm/README.md](scene_mm/README.md),
+Details and figures: [trackA_report.html](trackA_report.html), [scene_mm/README.md](scene_mm/README.md),
 [docs/STATUS.md](docs/STATUS.md). The full reproduction report (31 MB, 113 figures) is attached to the GitHub release.
 
 ## Repository layout
