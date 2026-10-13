@@ -26,3 +26,4 @@ scene_reproduction_patch.tar.gz
 
 # toy run outputs
 results_toy/
+!toy_data/*.h5ad
